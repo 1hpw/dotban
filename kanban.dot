@@ -1,0 +1,108 @@
+/* I just copied this from my SADI UML to demonstrate class diagrams; obviously the DO background collides with the multiplicity, but multiplicity/ETC doesn't belong in kanban anyway...
+ * to move between clusters (boards), just move the reference between the subgraphs
+ * you can connect edges (lines/arrows) to a direction (N/E/S/W), or a field (<fN>) ...it has some"-thing" todo with colons (EG A:n->B:sw & A:f0->B:f2); IIRC...
+ * probably need testing/review/ETC boards?
+ */
+strict digraph main {
+
+	/* CSS */
+
+	graph [
+		layout=dot
+		, rankdir=TB
+		, fontname=Monospace
+		, bgcolor=darkgray
+		, style=filled
+	] ; node [
+		fontname=Monospace
+		, style=filled
+		, fontsize=16
+		, fontcolor=black
+		, fillcolor=lightgrey
+		, shape=record
+	] ; edge [
+		labelfontcolor="#FF0000"
+		, color="#000000"
+	] ; subgraph cluster_pending {
+		graph [
+			rank=same
+			, color="#FFFF00"
+			, label="PENDING"
+		]
+		; node[fillcolor="#FF00FF"]
+		; int_GE int_P int_C
+		; GEI SP CI
+	} ; subgraph cluster_hacking {
+		graph [
+			rank=same
+			, color="#FF00FF"
+			, label="HACKING"
+		]
+		; node[fillcolor="#00FFFF"]
+		; comp_V comp_C
+	} ; subgraph cluster_hacked {
+		graph [
+			rank=same
+			, color="#00FFFF"
+			, label="HACKED"
+		]
+		; node[fillcolor="#00FF00"]
+		; C TH
+	}
+
+	/* Descriptive Details */
+
+	; comp_V [
+		label="{<f0> \<Component\>\nView| <f1> fields| <f2>methods| <f3> }"
+	] ; comp_C [
+		label="{<f0> \<Component\>\nController| <f1> fields| <f2>methods| <f3> }"
+	]
+
+	; int_GE [
+		label="{<f0> \<Interface\>\nGameEngine| <f1> fields| <f2>methods| <f3> }"
+	] ; int_P [
+		label="{<f0> \<Interface\>\nPlayer| <f1> fields| <f2>methods| <f3> }"
+	] ; int_C [
+		label="{<f0> \<Interface\>\nCoin| <f1> fields| <f2>methods| <f3> }"
+	]
+
+	; GEI [
+		label="{<f0> GameEngineImpl| <f1> fields| <f2>methods| <f3> }"
+	] ; SP [
+		label="{<f0> SimplePlayer| <f1> fields| <f2>methods| <f3> }"
+	] ; CI [
+		label="{<f0> CoinImpl| <f1> fields| <f2>methods| <f3> }"
+	] ; C [
+		label="{<f0> Client| <f1> fields| <f2>methods| <f3> }"
+	] ; TH [
+		label="{<f0> TestHarness| <f1> fields| <f2>methods| <f3> }"
+	]
+
+
+	/* Logical Associations */
+
+	; edge [
+		style=dashed
+		, arrowhead=empty
+	]
+	; SP -> int_P
+	; CI -> int_C
+	; GEI -> int_GE
+
+	; edge [
+		style=solid
+		, arrowhead=open
+	]
+	; GEI -> int_C [taillabel="1", headlabel="2..*"]
+	; GEI -> int_P [taillabel="1", headlabel="0..*"]
+	; SP -> int_C [taillabel="1", headlabel="1"]
+	; comp_V -> comp_C [taillabel="1", headlabel="1", dir=both]
+	; comp_C -> int_GE [taillabel="1", headlabel="1"]
+	; {C TH} -> int_GE [taillabel="1", headlabel="1"]
+
+	; edge [
+		style=solid
+		, arrowhead=empty
+	]
+
+}/*
